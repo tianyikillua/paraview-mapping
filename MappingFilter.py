@@ -14,8 +14,10 @@ __author__ = "Tianyi Li"
 __email__ = "tianyikillua@gmail.com"
 __copyright__ = "Copyright (c) 2019 {} <{}>".format(__author__, __email__)
 __license__ = "License :: OSI Approved :: MIT License"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __status__ = "Development Status :: 4 - Beta"
+
+paraview_plugin_version = __version__
 
 available_fields = [""]
 
@@ -130,7 +132,7 @@ def field_mc_from_VTK(
     return field
 
 
-@smproxy.filter(label="Mapping", support_reload=False)
+@smproxy.filter(name="Mapping", support_reload=False)
 @smproperty.input(name="TargetMesh", port_index=1)
 @smdomain.datatype(dataTypes=["vtkUnstructuredGrid"], composite_data_supported=False)
 @smproperty.input(name="SourceMesh", port_index=0)
@@ -174,7 +176,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
     def GetMethods(self):
         return ["P1P0", "P1P1", "P0P0", "P0P1"]
 
-    @smproperty.stringvector(name="MappingMethods", number_of_elements="1")
+    @smproperty.stringvector(name="MappingMethod", number_of_elements="1")
     @smdomain.xml(
         """
         <StringListDomain name="list">
@@ -191,6 +193,13 @@ class MappingFilter(VTKPythonAlgorithmBase):
 
     # Default mapped value
     @smproperty.doublevector(name="DefaultValue", default_values=-1e24)
+    @smdomain.xml(
+        """
+        <Documentation>
+            Default value -1e+24 will be mapped to Numpy NaN
+        </Documentation>
+        """
+    )
     @smdomain.doublerange(min=-1e24, max=1e24)
     def SetDefaultValue(self, default_value):
         if np.isclose(default_value, -1e24):
