@@ -14,7 +14,7 @@ __author__ = "Tianyi Li"
 __email__ = "tianyikillua@gmail.com"
 __copyright__ = "Copyright (c) 2019 {} <{}>".format(__author__, __email__)
 __license__ = "License :: OSI Approved :: MIT License"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __status__ = "Development Status :: 4 - Beta"
 
 available_fields = [""]
@@ -144,7 +144,9 @@ class MappingFilter(VTKPythonAlgorithmBase):
         self._field_name = None
         self._default_value = np.nan
         self._intersection_type = "Automatic"
+        self._nature = "IntensiveMaximum"
 
+    # Field to transfer
     @smproperty.stringvector(name="Fields", information_only="1")
     def GetFields(self):
         return available_fields
@@ -167,6 +169,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
             self._field_name = field_name
             self.Modified()
 
+    # Mapping method
     @smproperty.stringvector(name="Methods", information_only="1")
     def GetMethods(self):
         return ["P1P0", "P1P1", "P0P0", "P0P1"]
@@ -186,6 +189,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
             self._method = method
             self.Modified()
 
+    # Default mapped value
     @smproperty.doublevector(name="DefaultValue", default_values=-1e24)
     @smdomain.doublerange(min=-1e24, max=1e24)
     def SetDefaultValue(self, default_value):
@@ -197,6 +201,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
             self._default_value = default_value
             self.Modified()
 
+    # Intersection algorithm
     @smproperty.stringvector(name="IntersectionTypes", information_only="1")
     def GetIntersectionTypes(self):
         return ["Automatic", "PointLocator", "Triangulation"]
@@ -214,6 +219,31 @@ class MappingFilter(VTKPythonAlgorithmBase):
     def SetIntersectionType(self, intersection_type):
         if self._intersection_type != intersection_type:
             self._intersection_type = intersection_type
+            self.Modified()
+
+    # Nature of the field to transfer
+    @smproperty.stringvector(name="Natures", information_only="1")
+    def GetNatures(self):
+        return [
+            "IntensiveMaximum",
+            "IntensiveConservation",
+            "ExtensiveMaximum",
+            "ExtensiveConservation",
+        ]
+
+    @smproperty.stringvector(name="NatureOfTheField", number_of_elements="1")
+    @smdomain.xml(
+        """
+        <StringListDomain name="list">
+            <RequiredProperties>
+                <Property name="Natures" function="StringInfo"/>
+            </RequiredProperties>
+        </StringListDomain>
+        """
+    )
+    def SetNature(self, nature):
+        if self._nature != nature:
+            self._nature = nature
             self.Modified()
 
     def RequestData(self, request, inInfo, outInfo):
@@ -237,7 +267,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
         if self._field_name is not None:
             mapper = mc.MEDCouplingRemapper()
 
-            # Constructing MEDCoupling meshes
+            # Construct MEDCoupling meshes
             mesh_source_mc = mesh_mc_from_VTK(mesh_source)
             mesh_target_mc = mesh_mc_from_VTK(mesh_target)
 
@@ -254,7 +284,11 @@ class MappingFilter(VTKPythonAlgorithmBase):
             else:
                 on = "cells"
             field_source = field_mc_from_VTK(
-                mesh_source, self._field_name, on=on, mesh_mc=mesh_source_mc
+                mesh_source,
+                self._field_name,
+                on=on,
+                mesh_mc=mesh_source_mc,
+                nature=self._nature,
             )
 
             # Mapping
@@ -263,7 +297,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
             )
             array = field_target.getArray().toNumPyArray()
 
-            # Transfering mapped field to output
+            # Export mapped field to output
             if self._method[2:] == "P1":
                 output.PointData.append(array, self._field_name)
             else:
