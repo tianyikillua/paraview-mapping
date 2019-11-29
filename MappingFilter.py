@@ -14,7 +14,7 @@ __author__ = "Tianyi Li"
 __email__ = "tianyikillua@gmail.com"
 __copyright__ = "Copyright (c) 2019 {} <{}>".format(__author__, __email__)
 __license__ = "License :: OSI Approved :: MIT License"
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __status__ = "Development Status :: 4 - Beta"
 
 paraview_plugin_version = __version__
@@ -184,6 +184,9 @@ class MappingFilter(VTKPythonAlgorithmBase):
                 <Property name="Methods" function="StringInfo"/>
             </RequiredProperties>
         </StringListDomain>
+        <Documentation>
+            Please refer to the documentation of MEDCoupling for more information.
+        </Documentation>
         """
     )
     def SetMethod(self, method):
@@ -196,7 +199,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
     @smdomain.xml(
         """
         <Documentation>
-            Default value -1e+24 will be mapped to Numpy NaN
+            Default value -1e+24 will be mapped to Numpy NaN.
         </Documentation>
         """
     )
@@ -213,7 +216,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
     # Intersection algorithm
     @smproperty.stringvector(name="IntersectionTypes", information_only="1")
     def GetIntersectionTypes(self):
-        return ["Automatic", "PointLocator", "Triangulation"]
+        return ["Automatic", "Triangulation", "Convex", "Geometric2D", "PointLocator", ]
 
     @smproperty.stringvector(name="IntersectionAlgorithm", number_of_elements="1")
     @smdomain.xml(
@@ -223,6 +226,9 @@ class MappingFilter(VTKPythonAlgorithmBase):
                 <Property name="IntersectionTypes" function="StringInfo"/>
             </RequiredProperties>
         </StringListDomain>
+        <Documentation>
+            Please refer to the documentation of MEDCoupling for more information.
+        </Documentation>
         """
     )
     def SetIntersectionType(self, intersection_type):
@@ -248,6 +254,9 @@ class MappingFilter(VTKPythonAlgorithmBase):
                 <Property name="Natures" function="StringInfo"/>
             </RequiredProperties>
         </StringListDomain>
+        <Documentation>
+            Please refer to the documentation of MEDCoupling for more information.
+        </Documentation>
         """
     )
     def SetNature(self, nature):
