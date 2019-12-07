@@ -1,6 +1,5 @@
 import medcoupling as mc
 import numpy as np
-
 from paraview.util.vtkAlgorithm import (
     VTKPythonAlgorithmBase,
     smdomain,
@@ -216,7 +215,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
     # Intersection algorithm
     @smproperty.stringvector(name="IntersectionTypes", information_only="1")
     def GetIntersectionTypes(self):
-        return ["Automatic", "Triangulation", "Convex", "Geometric2D", "PointLocator", ]
+        return ["Automatic", "Triangulation", "Convex", "Geometric2D", "PointLocator"]
 
     @smproperty.stringvector(name="IntersectionAlgorithm", number_of_elements="1")
     @smdomain.xml(
