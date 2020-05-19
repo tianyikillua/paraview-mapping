@@ -13,7 +13,7 @@ __author__ = "Tianyi Li"
 __email__ = "tianyikillua@gmail.com"
 __copyright__ = "Copyright (c) 2019 {} <{}>".format(__author__, __email__)
 __license__ = "License :: OSI Approved :: MIT License"
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __status__ = "Development Status :: 4 - Beta"
 
 paraview_plugin_version = __version__
@@ -79,6 +79,7 @@ def mesh_mc_from_VTK(mesh, check=False):
     points = np.asarray(mesh.GetPoints()).copy()
     cell_conn = np.asarray(mesh.GetCells()).copy()
     cell_offsets = np.asarray(mesh.GetCellLocations()).copy()
+    cell_offsets += np.arange(len(cell_offsets))
     cell_types = np.asarray(mesh.GetCellTypes()).copy()
 
     # Initialization
@@ -87,7 +88,7 @@ def mesh_mc_from_VTK(mesh, check=False):
     # Points
     if np.isclose(np.linalg.norm(points[:, 2]), 0):
         points = points[:, [0, 1]].copy()
-    coords = mc.DataArrayDouble(points)
+    coords = mc.DataArrayDouble(points.astype(float))
     mesh_mc.setCoords(coords)
 
     # Cells
@@ -282,6 +283,7 @@ class MappingFilter(VTKPythonAlgorithmBase):
 
         # Perform mapping
         if self._field_name is not None:
+            print(self._field_name)
             mapper = mc.MEDCouplingRemapper()
 
             # Construct MEDCoupling meshes

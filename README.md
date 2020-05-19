@@ -10,7 +10,7 @@ This repository contains a ParaView Python plugin (`MappingFilter.py`) that can 
 ## Installation and updates
 
 If you have downloaded a binary version of ParaView, you may proceed as follows
-1. Download the [`medcoupling`](https://github.com/tianyikillua/medcoupling) Python package library and put the `medcoupling` folder into the `site-packages` directory of ParaView. For instance, under Windows, it is `bin\Lib\site-packages`. You need to make sure that ParaView uses a Python version that supports `medcoupling`, that is at least Python 3.6.
+1. Download the [`medcoupling`](https://github.com/tianyikillua/medcoupling) Python package library and put the `medcoupling` folder into the `site-packages` directory of ParaView. For instance, under Windows, it is `bin\Lib\site-packages`. You need to make sure that ParaView uses a Python version that supports `medcoupling`, that is at least Python 3.7.
 2. Download `MappingFilter.py` and load the plugin under ParaView, via *Tools* / *Manage Plugins* / *Load New*. You can optionally check the option *Auto Load*.
 
 To ensure that the current plugin is up to date, you may clone this repository and frequently pull the latest updates
